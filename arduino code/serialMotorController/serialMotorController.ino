@@ -9,8 +9,8 @@ Adafruit_DCMotor *leftm, *rightm;
 byte LEFT_MOTOR_PORT = 1;
 byte RIGHT_MOTOR_PORT = 2;
 int LEFT_SENSOR_PIN = A5, RIGHT_SENSOR_PIN = A3;
-int LEFT_THRESH = 800;
-int RIGHT_THRESH = 800;
+int LEFT_SENSOR_THRESH = 800;
+int RIGHT_SENSOR_THRESH = 800;
 int left_sensor, right_sensor;
 char incoming_msg[4] = "   "; //three chars and a string temrinator
 char command_arg[3];
@@ -90,7 +90,6 @@ void loop() {
 
 void findLineLeft() {
   left_sensor = analogRead(LEFT_SENSOR_PIN);
-  right_sensor = analogRead(RIGHT_SENSOR_PIN);
 
   if (!foundLine) {
     if (left_sensor < LEFT_SENSOR_THRESH) {
@@ -100,6 +99,24 @@ void findLineLeft() {
     }
   } else {
     if (left_sensor > LEFT_SENSOR_THRESH) {
+      drive(-20, 20);
+    } else {
+      drive(0, 0);
+    }
+  }
+}
+
+void findLineRight() {
+  right_sensor = analogRead(RIGHT_SENSOR_PIN);
+
+  if (!foundLine) {
+    if (right_sensor < RIGHT_SENSOR_PIN) {
+      drive(-20, 20);
+    } else {
+      foundLine = true;
+    }
+  } else {
+    if (right_sensor > RIGHT_SENSOR_PIN) {
       drive(-20, 20);
     } else {
       drive(0, 0);
