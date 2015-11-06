@@ -12,12 +12,13 @@ int LEFT_SENSOR_PIN = A5, RIGHT_SENSOR_PIN = A3;
 int LEFT_SENSOR_THRESH = 800;
 int RIGHT_SENSOR_THRESH = 800;
 int left_sensor, right_sensor;
-char incoming_msg[4] = "   "; //three chars and a string temrinator
+char incoming_msg[3] = ""; //three bytes of data
 char command_arg[3];
 char command;
 int actual_speed;
 boolean argParse = false;
 boolean foundLine = false;
+boolean unknownCommandFlag = false;
 
 void setup() {
   Serial.begin(9600);
@@ -35,18 +36,22 @@ void loop() {
   if (Serial.available()) {
     if (!argParse) {
       command = Serial.read();
+      Serial.print("Command received: " + String(command) + "\n");
+      unknownCommandFlag = true;
       resetDriveParams();
       //flag argParse if command needs additional argument
       argParse = (command == 'L' || command == 'R');
+      Serial.print("Waiting for args? " + String(argParse) + "\n");
     } else {
       //we are looking for arguments to command
       //currently only looking for 3 byte arguments
-      if (Serial.available() >= 4) { //4 bytes indicates 3 bytes and one string terminator
-        Serial.readBytes(incoming_msg, 4);
+      if (Serial.available() >= 3) { //4 bytes indicates 3 bytes and one string terminator
+        Serial.readBytes(incoming_msg, 3);
         //store 3 bytes of argument
-        command_arg[3] = incoming_msg[3];
-        command_arg[2] = incoming_msg[2];
+        command_arg[2] = incoming_msg[0];
         command_arg[1] = incoming_msg[1];
+        command_arg[0] = incoming_msg[2];
+        Serial.print("Argument received: " + String(command_arg[2]) + String(command_arg[1]) + String(command_arg[0]) + "\n");
         argParse = false; //deflag argParse so we can read the next msg
       }
     }
@@ -84,6 +89,10 @@ void loop() {
       
     default:
       //change nothing
+      if (unknownCommandFlag) {
+        Serial.print("Unknown command received: " + String(command) + "\n");
+      }
+      unknownCommandFlag = false;
       break;
   }
 }
