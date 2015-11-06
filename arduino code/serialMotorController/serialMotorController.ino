@@ -6,12 +6,17 @@
 
 Adafruit_MotorShield MS;
 Adafruit_DCMotor *leftm, *rightm;
-byte LEFT_MOTOR_PORT = 1;
-byte RIGHT_MOTOR_PORT = 2;
-int LEFT_SENSOR_PIN = A5, RIGHT_SENSOR_PIN = A3;
-int LEFT_SENSOR_THRESH = 800;
-int RIGHT_SENSOR_THRESH = 800;
+const byte LEFT_MOTOR_PORT = 1;
+const byte RIGHT_MOTOR_PORT = 2;
+const int LEFT_SENSOR_PIN = A5, RIGHT_SENSOR_PIN = A3;
+const int LEFT_SENSOR_THRESH = 800;
+const int RIGHT_SENSOR_THRESH = 800;
+const int LEFT_HALL_A_PIN = 1, LEFT_HALL_B_PIN = 2;
+const int RIGHT_HALL_A_PIN = 3, RIGHT_HALL_B_PIN = 4;
+int la_prevstate = 0, lb_prevstate = 0, ra_prevstate = 0, rb_prevstate = 0;
+int la_state = 0, lb_state = 0, ra_state = 0, rb_state = 0;
 int left_sensor, right_sensor;
+int left_encoder = 0, right_encoder = 0;
 char incoming_msg[3] = ""; //three bytes of data
 char command_arg[3];
 char command;
@@ -33,6 +38,11 @@ void setup() {
 }
 
 void loop() {
+
+  //Encoder accumulating
+  accumulateEncoders();
+  
+  //Command parsing
   if (Serial.available()) {
     if (!argParse) {
       command = Serial.read();
@@ -56,6 +66,8 @@ void loop() {
       }
     }
   }
+
+  //Command execution
   switch (command) { //Continually operate on last received command
     case 'L': //Control Left Motor
       if (!argParse) {
@@ -160,3 +172,18 @@ void drive(int l, int r) { // helper function to drive motors
 void resetDriveParams() {
   foundLine = false;
 }
+
+void accumulateEncoders() {
+  accumulateEncoder_Left_A();
+  accumulateEncoder_Left_B();
+  accumulateEncoder_Right_A();
+  accumulateEncoder_Right_B();
+}
+
+void accumulateEncoder_Left_A() {
+  //Trigger on edge of signal (rising or falling)
+  if (la_state != la_prevstate) {
+    
+  }
+}
+
