@@ -183,7 +183,32 @@ void accumulateEncoders() {
 void accumulateEncoder_Left_A() {
   //Trigger on edge of signal (rising or falling)
   if (la_state != la_prevstate) {
-    
+    left_encoder = left_encoder + 1;
+    la_prevstate = la_state;
+  }
+}
+
+void accumulateEncoder_Left_B() {
+  //Trigger on edge of signal (rising or falling)
+  if (lb_state != lb_prevstate) {
+    left_encoder = left_encoder + 1;
+    lb_prevstate = lb_state;
+  }
+}
+
+void accumulateEncoder_Right_A() {
+  //Trigger on edge of signal (rising or falling)
+  if (ra_state != ra_prevstate) {
+    right_encoder = right_encoder + 1;
+    ra_prevstate = ra_state;
+  }
+}
+
+void accumulateEncoder_Right_B() {
+  //Trigger on edge of signal (rising or falling)
+  if (rb_state != rb_prevstate) {
+    right_encoder = right_encoder + 1;
+    rb_prevstate = rb_state;
   }
 }
 
